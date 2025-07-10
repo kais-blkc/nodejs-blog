@@ -1,0 +1,21 @@
+name: update user
+description: |-
+  export class UserUpdateDto {
+    name?: string;
+    email?: string;
+    password?: string;
+    status?: Status;
+  }
+method: PATCH
+url: http://$baseUrl/users/$userId
+body:
+  content: |-
+    {
+      "status": "ACTIVE"
+    }
+  content_type: application/json
+headers:
+- name: Authorization
+  value: $adminToken
+- name: content-type
+  value: application/json

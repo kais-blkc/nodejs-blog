@@ -1,0 +1,5 @@
+name: get user by id
+url: http://$baseUrl/users/$userId
+headers:
+- name: Authorization
+  value: $userToken
