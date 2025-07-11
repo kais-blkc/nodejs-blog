@@ -5,9 +5,10 @@ import { UsersService } from "./users.service";
 import { TYPES } from "../../core/di/types";
 import { Request, Response } from "express";
 import { UserRdo } from "./rdo/users.rdo";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { autoBind } from "@/core/utils/autobind";
 
+@injectable()
 export class UsersController {
   constructor(
     @inject(TYPES.UsersService)

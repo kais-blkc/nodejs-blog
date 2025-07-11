@@ -7,9 +7,10 @@ import { AuthService } from "../auth/auth.service";
 import { StatusCodes } from "http-status-codes";
 import { TYPES } from "@/core/di/types";
 import { Response } from "express";
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { autoBind } from "@/core/utils/autobind";
 
+@injectable()
 export class AuthController {
   constructor(
     @inject(TYPES.AuthService)
