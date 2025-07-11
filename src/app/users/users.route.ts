@@ -10,6 +10,7 @@ import {
 } from "@/core/middlewares/auth.middleware";
 import { TYPES } from "@/core/di/types";
 import { Router } from "express";
+import { asyncHandler } from "@/core/utils/async-handler";
 
 const router = Router();
 const prisma = container.get<PrismaClient>(TYPES.PrismaClient);
@@ -19,14 +20,14 @@ router.get(
   "/",
   authMiddlewareFactory(prisma),
   adminMiddleware,
-  usersController.findAll,
+  asyncHandler(usersController.findAll),
 );
 
 router.get(
   "/:id",
   authMiddlewareFactory(prisma),
   selfOrAdminMiddleware,
-  usersController.findById,
+  asyncHandler(usersController.findById),
 );
 
 router.patch(
@@ -34,7 +35,7 @@ router.patch(
   authMiddlewareFactory(prisma),
   selfOrAdminMiddleware,
   validateDtoMiddleware(UserUpdateDto),
-  usersController.update,
+  asyncHandler(usersController.update),
 );
 
 router.patch(
@@ -42,7 +43,7 @@ router.patch(
   authMiddlewareFactory(prisma),
   adminMiddleware,
   validateDtoMiddleware(UserUpdateRoleDto),
-  usersController.changeRole,
+  asyncHandler(usersController.changeRole),
 );
 
 export { router as usersRouter };
