@@ -1,0 +1,13 @@
+model File {
+  id        String @id @default(cuid())
+  name      String
+  extension String
+  mimeType  String
+  size      Int
+  path      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("files")
+}

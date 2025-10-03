@@ -1,0 +1,8 @@
+name: file list
+description: |-
+  Get list of files with pagination
+method: GET
+url: http://$baseUrl/file/list?page=1&list_size=5
+headers:
+  - name: content-type
+    value: application/json

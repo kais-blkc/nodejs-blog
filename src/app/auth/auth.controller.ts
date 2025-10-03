@@ -1,14 +1,14 @@
-import { transformResponse } from "@/core/utils/transform-response";
-import { HttpErrors } from "@/core/exceptions/http-errors.factory";
-import { TypedRequestBody } from "@/core/types/request.types";
-import { TokenRdo, UserRdo } from "../users/rdo/users.rdo";
-import { LoginDto, RegisterDto } from "./dto/auth.dto";
-import { AuthService } from "../auth/auth.service";
-import { StatusCodes } from "http-status-codes";
 import { TYPES } from "@/core/di/types";
-import { Response } from "express";
-import { inject, injectable } from "inversify";
+import { TypedRequestBody } from "@/core/types/request.types";
 import { autoBind } from "@/core/utils/autobind";
+import { transformResponse } from "@/core/utils/transform-response";
+import { Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import { inject, injectable } from "inversify";
+import { AuthService } from "../auth/auth.service";
+import { JWTResponseRdo } from "../users/rdo/users.rdo";
+import { LoginDto, RegisterDto } from "./dto/auth.dto";
+import { JwtRefreshDto } from "./dto/jwt-refresh.dto";
 
 @injectable()
 export class AuthController {
@@ -20,24 +20,34 @@ export class AuthController {
   }
 
   public async register(req: TypedRequestBody<RegisterDto>, res: Response) {
-    if (!req.body) {
-      throw HttpErrors.badRequest("Request body is empty");
-    }
-
     const userData = req.body;
-    const user = await this.authService.register(userData);
+    const jwtToken = await this.authService.register(userData);
 
-    res.status(StatusCodes.CREATED).json(transformResponse(UserRdo, user));
+    res
+      .status(StatusCodes.CREATED)
+      .json(transformResponse(JWTResponseRdo, jwtToken));
   }
 
   public async login(req: TypedRequestBody<LoginDto>, res: Response) {
-    if (!req.body) {
-      throw HttpErrors.badRequest("Request body is empty");
-    }
-
     const loginData = req.body;
-    const user = await this.authService.login(loginData);
+    const jwtToken = await this.authService.login(loginData);
 
-    res.status(StatusCodes.OK).json(transformResponse(TokenRdo, user));
+    res
+      .status(StatusCodes.OK)
+      .json(transformResponse(JWTResponseRdo, jwtToken));
+  }
+
+  public async refreshToken(
+    req: TypedRequestBody<JwtRefreshDto>,
+    res: Response,
+  ) {
+    const { refreshToken } = req.body;
+    const newJwt = await this.authService.refreshToken(refreshToken);
+    res.status(StatusCodes.OK).json(transformResponse(JWTResponseRdo, newJwt));
+  }
+
+  public async logout(req: TypedRequestBody<JwtRefreshDto>, res: Response) {
+    await this.authService.logout(req.body.refreshToken);
+    res.status(StatusCodes.NO_CONTENT).send();
   }
 }

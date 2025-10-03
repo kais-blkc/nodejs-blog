@@ -3,20 +3,13 @@ description: |-
   export class RegisterDto {
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    middleName: string;
-    birthDate: Date;
   }
 method: POST
-url: http://$baseUrl/auth/register
+url: http://$baseUrl/auth/signup
 body:
   content: |-
     {
-      "firstName": "Intterly",
-      "lastName": "Poind",
-      "birthDate": "1995-03-09",
-      "email": "intterly@example.com",
+      "email": "user3@example.com",
       "password": "password321"
     }
   content_type: application/json

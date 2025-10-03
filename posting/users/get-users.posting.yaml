@@ -1,5 +1,2 @@
 name: get users
 url: http://$baseUrl/users/
-headers:
-- name: Authorization
-  value: $adminToken

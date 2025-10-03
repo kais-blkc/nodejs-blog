@@ -1,0 +1,8 @@
+name: get file by id
+description: |-
+  Get info about a file
+method: GET
+url: http://$baseUrl/file/{{fileId}}
+headers:
+  - name: content-type
+    value: application/json

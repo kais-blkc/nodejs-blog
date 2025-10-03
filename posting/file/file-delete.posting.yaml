@@ -1,0 +1,8 @@
+name: delete file
+description: |-
+  Delete file by id
+method: DELETE
+url: http://$baseUrl/file/delete/{{fileId}}
+headers:
+  - name: content-type
+    value: application/json

@@ -2,46 +2,98 @@ import { validateDtoMiddleware } from "@/core/middlewares/validate-dto.middlewar
 import { UserUpdateDto, UserUpdateRoleDto } from "../users/dto/users.dto";
 import { UsersController } from "../users/users.controller";
 import { container } from "@/core/di/inversify.config";
-import { PrismaClient } from "@prisma/client";
-import {
-  authMiddlewareFactory,
-  selfOrAdminMiddleware,
-  adminMiddleware,
-} from "@/core/middlewares/auth.middleware";
 import { TYPES } from "@/core/di/types";
 import { Router } from "express";
 import { asyncHandler } from "@/core/utils/async-handler";
 
 const router = Router();
-const prisma = container.get<PrismaClient>(TYPES.PrismaClient);
 const usersController = container.get<UsersController>(TYPES.UsersController);
 
-router.get(
-  "/",
-  authMiddlewareFactory(prisma),
-  adminMiddleware,
-  asyncHandler(usersController.findAll),
-);
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     tags: [Users]
+ *     summary: Получить всех пользователей
+ *     responses:
+ *       200:
+ *         description: Список пользователей
+ */
+router.get("/", asyncHandler(usersController.findAll));
 
-router.get(
-  "/:id",
-  authMiddlewareFactory(prisma),
-  selfOrAdminMiddleware,
-  asyncHandler(usersController.findById),
-);
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     tags: [Users]
+ *     summary: Найти пользователя по ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Данные пользователя
+ */
+router.get("/:id", asyncHandler(usersController.findById));
 
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   patch:
+ *     tags: [Users]
+ *     summary: Обновить пользователя
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Иван Иванов"
+ *               email:
+ *                 type: string
+ *                 example: "ivan@example.com"
+ *     responses:
+ *       200:
+ *         description: Пользователь обновлен
+ */
 router.patch(
   "/:id",
-  authMiddlewareFactory(prisma),
-  selfOrAdminMiddleware,
   validateDtoMiddleware(UserUpdateDto),
   asyncHandler(usersController.update),
 );
 
+/**
+ * @swagger
+ * /api/users/{id}/role:
+ *   patch:
+ *     tags: [Users]
+ *     summary: Изменить роль пользователя
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 example: "admin"
+ *     responses:
+ *       200:
+ *         description: Роль изменена
+ */
 router.patch(
   "/:id/role",
-  authMiddlewareFactory(prisma),
-  adminMiddleware,
   validateDtoMiddleware(UserUpdateRoleDto),
   asyncHandler(usersController.changeRole),
 );

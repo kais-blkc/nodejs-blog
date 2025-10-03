@@ -1,8 +1,9 @@
 import { errorMiddleware } from "@/core/middlewares/error.middleware";
+import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import cors from "cors";
+import { setupSwagger } from "./core/config/swagger.config";
 import { setupRoutes } from "./routes";
 
 const app = express();
@@ -15,5 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", setupRoutes());
 app.use(errorMiddleware);
+setupSwagger(app);
 
 export { app };

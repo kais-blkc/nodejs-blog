@@ -1,0 +1,17 @@
+name: update file
+description: |-
+  Replace existing file with new one
+method: PUT
+url: http://$baseUrl/file/update/{{fileId}}
+body:
+  content_type: multipart/form-data
+  content: |-
+    ------WebKitFormBoundary
+    Content-Disposition: form-data; name="file"; filename="new_example.txt"
+    Content-Type: text/plain
+
+    Updated file content!
+    ------WebKitFormBoundary--
+headers:
+  - name: content-type
+    value: multipart/form-data

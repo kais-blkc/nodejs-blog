@@ -12,13 +12,11 @@ export function authMiddlewareFactory(prisma: PrismaClient) {
     next: NextFunction,
   ) {
     const token = req.header("Authorization")?.replace("Bearer ", "");
-
     if (!token) {
       throw HttpErrors.unauthorized("Unauthorized");
     }
 
-    const decoded = verifyToken(token);
-
+    const decoded = verifyAccessToken(token);
     if (!decoded) {
       throw HttpErrors.unauthorized("Unauthorized");
     }
@@ -26,7 +24,6 @@ export function authMiddlewareFactory(prisma: PrismaClient) {
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
     });
-
     if (!user) {
       throw HttpErrors.notFound("User not found");
     }
@@ -38,6 +35,26 @@ export function authMiddlewareFactory(prisma: PrismaClient) {
     req.user = user;
     next();
   };
+}
+
+function verifyAccessToken(token: string): TokenPayload {
+  try {
+    return jwt.verify(token, envConfig.jwtSecret, {
+      ignoreExpiration: false,
+    }) as TokenPayload;
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      throw HttpErrors.unauthorized("Token expired");
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      throw HttpErrors.unauthorized("Invalid token");
+    }
+    if (error instanceof jwt.NotBeforeError) {
+      throw HttpErrors.unauthorized("Token not active yet");
+    }
+
+    throw HttpErrors.unauthorized("Something went wrong with token");
+  }
 }
 
 export async function adminMiddleware(
@@ -61,27 +78,4 @@ export async function selfOrAdminMiddleware(
     throw HttpErrors.forbidden("Forbidden - Access denied");
   }
   next();
-}
-
-function verifyToken(token: string): TokenPayload {
-  try {
-    return jwt.verify(
-      // for break lines
-      token,
-      envConfig.jwtSecret,
-      { ignoreExpiration: false },
-    ) as TokenPayload;
-  } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      throw HttpErrors.unauthorized("Token expired");
-    }
-    if (error instanceof jwt.JsonWebTokenError) {
-      throw HttpErrors.unauthorized("Invalid token");
-    }
-    if (error instanceof jwt.NotBeforeError) {
-      throw HttpErrors.unauthorized("Token not active yet");
-    }
-
-    throw HttpErrors.unauthorized("Something went wrong with token");
-  }
 }

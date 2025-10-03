@@ -1,7 +1,8 @@
-import { HttpException } from "./http.exception";
 import { StatusCodes } from "http-status-codes";
+import { HttpException } from "./http.exception";
 
 export class HttpErrors {
+  // 400
   static badRequest(message = "Bad request", details?: object) {
     return new HttpException(StatusCodes.BAD_REQUEST, message, details);
   }
@@ -24,5 +25,17 @@ export class HttpErrors {
   // 409
   static conflict(message = "Conflict", details?: object) {
     return new HttpException(StatusCodes.CONFLICT, message, details);
+  }
+
+  // 500
+  static internalServerError(
+    message = "Internal Server Error",
+    details?: object,
+  ) {
+    return new HttpException(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      message,
+      details,
+    );
   }
 }

@@ -1,0 +1,17 @@
+name: file upload
+description: |-
+  Upload a new file
+method: POST
+url: http://$baseUrl/file/upload
+body:
+  content_type: multipart/form-data
+  content: |-
+    ------WebKitFormBoundary
+    Content-Disposition: form-data; name="file"; filename="example.txt"
+    Content-Type: text/plain
+
+    Hello world!
+    ------WebKitFormBoundary--
+headers:
+  - name: content-type
+    value: multipart/form-data

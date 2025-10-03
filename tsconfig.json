@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "strict": true,
     "baseUrl": "./",
@@ -16,6 +17,9 @@
       "@/*": [
         "src/*"
       ]
-    }
+    },
+    "types": [
+      "node"
+    ]
   }
 }

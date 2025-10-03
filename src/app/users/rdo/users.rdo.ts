@@ -30,3 +30,10 @@ export class TokenRdo {
   @Expose()
   token: string;
 }
+
+export class JWTResponseRdo {
+  @Expose()
+  accessToken: string;
+  @Expose()
+  refreshToken: string;
+}

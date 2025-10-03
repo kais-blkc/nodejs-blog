@@ -19,7 +19,8 @@ export class UsersController {
 
   public async findAll(_: Request, res: Response) {
     const users = await this.usersService.findAll();
-    res.status(StatusCodes.OK).json(transformResponse(UserRdo, users));
+    const usersRdo = users.map((user) => transformResponse(UserRdo, user));
+    res.status(StatusCodes.OK).json(usersRdo);
   }
 
   public async findById(req: Request, res: Response) {
